@@ -17,15 +17,11 @@ export class ImageGallery extends Component {
     error: null,
   };
 
-  componentDidMount() {
-    this.searchImages();
-  }
-
   componentDidUpdate(prevProps, prevState) {
     const { page } = this.state;
     const { query } = this.props;
 
-    if (prevProps.query !== query) {
+    if (prevProps.query !== query && query.trim() !== '') {
       this.searchImages();
     }
 
