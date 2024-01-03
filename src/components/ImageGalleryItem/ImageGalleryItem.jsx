@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import { ModalWindow } from 'components/ModalWindow';
@@ -7,43 +7,33 @@ import css from './ImageGalleryItem.module.css';
 
 const modalRoot = document.getElementById('modal-root');
 
-export class ImageGalleryItem extends Component {
-  state = { showModal: false };
+export const ImageGalleryItem = ({
+  image: { webformatURL, largeImageURL, tags },
+}) => {
+  const [showModal, setShowModal] = useState(false);
 
-  toggleModal = () => {
-    this.setState(prevState => ({
-      showModal: !prevState.showModal,
-    }));
-  };
+  const toggleModal = () => setShowModal(showModal => !showModal);
 
-  render() {
-    const {
-      image: { webformatURL, largeImageURL, tags },
-    } = this.props;
+  return (
+    <li className={css.imageGalleryItem}>
+      <img
+        className={css.imageGalleryItemImage}
+        src={webformatURL}
+        alt={tags}
+        onClick={toggleModal}
+      />
 
-    const { showModal } = this.state;
-
-    return (
-      <li className={css.imageGalleryItem}>
-        <img
-          className={css.imageGalleryItemImage}
-          src={webformatURL}
-          alt={tags}
-          onClick={this.toggleModal}
-        />
-
-        {showModal &&
-          createPortal(
-            <ModalWindow toggleModal={this.toggleModal}>
-              <img
-                className={css.largeImageGalleryItem}
-                src={largeImageURL}
-                alt={tags}
-              />
-            </ModalWindow>,
-            modalRoot
-          )}
-      </li>
-    );
-  }
-}
+      {showModal &&
+        createPortal(
+          <ModalWindow toggleModal={toggleModal}>
+            <img
+              className={css.largeImageGalleryItem}
+              src={largeImageURL}
+              alt={tags}
+            />
+          </ModalWindow>,
+          modalRoot
+        )}
+    </li>
+  );
+};

@@ -1,30 +1,24 @@
-import { Component } from 'react';
+import { useEffect } from 'react';
 
 import css from './ModalWindow.module.css';
 
-class ModalWindow extends Component {
-  componentDidMount() {
-    window.addEventListener('keydown', this.handleEscapeClick);
-  }
+export const ModalWindow = ({ toggleModal, children }) => {
+  useEffect(() => {
+    const handleEscapeClick = ({ key }) => key === 'Escape' && toggleModal();
 
-  componentWillUnmount() {
-    window.removeEventListener('keydown', this.handleEscapeClick);
-  }
+    window.addEventListener('keydown', handleEscapeClick);
 
-  handleEscapeClick = ({ key }) => key === 'Escape' && this.props.toggleModal();
+    return () => {
+      window.removeEventListener('keydown', handleEscapeClick);
+    };
+  }, [toggleModal]);
 
-  handleBackdropClick = ({ target, currentTarget }) =>
-    target === currentTarget && this.props.toggleModal();
+  const handleBackdropClick = ({ target, currentTarget }) =>
+    target === currentTarget && toggleModal();
 
-  render() {
-    const { children } = this.props;
-
-    return (
-      <div className={css.overlay} onClick={this.handleBackdropClick}>
-        <div className={css.modal}>{children}</div>
-      </div>
-    );
-  }
-}
-
-export { ModalWindow };
+  return (
+    <div className={css.overlay} onClick={handleBackdropClick}>
+      <div className={css.modal}>{children}</div>
+    </div>
+  );
+};
